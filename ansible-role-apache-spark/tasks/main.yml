@@ -1,0 +1,103 @@
+# tasks file for ansible-role-apache-spark
+- name: Add spark user to wheel
+  user:
+    name: "{{ spark_user }}"
+    state: present
+    groups: "sudo"
+
+- name: sudo without password for sudoers group
+  copy:
+    content: "%wheel ALL=(ALL:ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/wheel_nopasswd
+    mode: 0440
+
+- name: Make sure ssh directory exists
+  file:
+    path: "/home/{{ spark_user }}/.ssh"
+    state: directory
+
+- name: Copy ssh public key
+  copy:
+    src: "{{ ssh_public_key_path }}"
+    dest: "/home/{{ spark_user }}/.ssh/id_rsa.pub"
+    owner: "{{ spark_user }}"
+    mode: 0600
+
+- name: add ssh public key to authorized users
+  shell: "cat /home/{{ spark_user }}/.ssh/id_rsa.pub >> /home/{{ spark_user }}/.ssh/authorized_keys"
+
+- name: install java
+  become: true
+  apt:
+    name: openjdk-8-jdk
+    state: present
+
+- name: Download spark using get_url
+  become: true
+  get_url:
+    url: https://dlcdn.apache.org/spark/spark-{{ spark_version }}/{{ spark_artifact }}
+    dest: /opt
+    checksum: "{{ spark_version_checksum }}"
+
+- name: Extract Spark archive
+  become: true
+  unarchive:
+    src: "/opt/{{ spark_artifact }}"
+    dest: /opt
+    remote_src: yes
+
+- name: stop spark worker
+  become: true
+  shell: "sbin/stop-worker.sh"
+  args:
+    chdir: "{{ spark_install_dir }}"
+  ignore_errors: true
+
+- name: stop spark master
+  become: true
+  shell: "sbin/stop-master.sh"
+  args:
+    chdir: "{{ spark_install_dir }}"
+  ignore_errors: true
+
+- name: Make sure installation directory is empty
+  become: true
+  file:
+    path: "{{ spark_install_dir }}"
+    state: absent
+
+- name: Rename Spark archive
+  become: true
+  command: "mv -f /opt/{{ spark_artifact_extracted }} {{ spark_install_dir }}"
+
+- name: Make sure log directory is present
+  become: true
+  file:
+    path: "{{ spark_log_dir }}"
+    state: directory
+    owner: "{{ spark_user }}"
+
+- name: Allow all access to tcp port 7077
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "7077"
+    proto: tcp
+
+- name: start spark master
+  become: true
+  shell: "sbin/start-master.sh"
+  args:
+    chdir: "{{ spark_install_dir }}"
+
+- name: start spark worker
+  become: true
+  shell: "sbin/start-worker.sh spark://$(hostname):7077"
+  args:
+    chdir: "{{ spark_install_dir }}"
+
+- name: Set SPARK_HOME
+  become: true
+  template:
+    src: spark_home.sh.j2
+    dest: /etc/profile.d/spark_home.sh

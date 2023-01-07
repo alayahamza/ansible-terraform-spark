@@ -1,0 +1,7 @@
+terraform/*.tfstate*
+terraform/.*
+terraform/root_pass
+ansible-role-apache-spark/.vscode/settings.json
+terraform/linode_api_token
+terraform/linode_ssh_key
+terraform/linode_ssh_key.pub

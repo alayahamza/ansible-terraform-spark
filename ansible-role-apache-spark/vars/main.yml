@@ -1,0 +1,12 @@
+---
+# vars file for ansible-role-apache-spark
+java_home: /usr/bin/java
+spark_user: spark-user
+spark_version: 3.3.1
+spark_version_checksum: sha512:769db39a560a95fd88b58ed3e9e7d1e92fb68ee406689fb4d30c033cb5911e05c1942dcc70e5ec4585df84e80aabbc272b9386a208debda89522efff1335c8ff
+spark_artifact: spark-{{ spark_version }}-bin-hadoop3.tgz
+spark_artifact_extracted: spark-{{ spark_version }}-bin-hadoop3
+spark_install_dir: /opt/spark
+spark_log_dir: /opt/spark/logs
+spark_run_dir: /tmp/spark/run
+ssh_public_key_path: ../terraform/linode_ssh_key.pub

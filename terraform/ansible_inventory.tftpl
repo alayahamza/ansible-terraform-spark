@@ -1,0 +1,4 @@
+[nodes]
+%{ for index, ip in nodes ~}
+node-${index} ansible_host=${ip} ansible_user=root ansible_password="3tGZB8SgJ+6.S#K" ansible_become_pass="3tGZB8SgJ+6.S#K" ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+%{ endfor ~}
