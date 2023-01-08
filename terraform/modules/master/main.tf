@@ -13,7 +13,7 @@ output "master_ip" {
 }
 
 resource "linode_instance" "master" {
-  image           = "linode/ubuntu20.04"
+  image           = "linode/ubuntu22.04"
   label           = "master"
   group           = "master"
   region          = "eu-west"

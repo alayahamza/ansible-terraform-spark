@@ -3,22 +3,22 @@
 CMD=$1
 NUM_WORKERS=$2
 
-create_cluster(){
-    terraform -chdir=terraform init
-    terraform -chdir=terraform apply -auto-approve
-    
-    ANSIBLE_HOST_KEY_CHECKING=False \
+create_cluster() {
+  terraform -chdir=terraform init
+  terraform -chdir=terraform apply -auto-approve
+
+  ANSIBLE_HOST_KEY_CHECKING=False \
     ansible-playbook \
     -i ./terraform/ansible_inventory \
     --extra-vars="master_ip_address=$(terraform -chdir=terraform output -raw master_ip)" \
     playbook.yml
 }
 
-scale_cluster(){
-    terraform -chdir=terraform init
-    terraform -chdir=terraform apply -var="workers_count=$NUM_WORKERS" -auto-approve
-    
-    ANSIBLE_HOST_KEY_CHECKING=False \
+scale_cluster() {
+  terraform -chdir=terraform init
+  terraform -chdir=terraform apply -var="workers_count=$NUM_WORKERS" -auto-approve
+
+  ANSIBLE_HOST_KEY_CHECKING=False \
     ansible-playbook \
     -i ./terraform/ansible_inventory \
     --extra-vars="master_ip_address=$(terraform -chdir=terraform output -raw master_ip)" \
@@ -26,16 +26,16 @@ scale_cluster(){
 }
 
 case $CMD in
-    "create")
-        create_cluster
-    ;;
-    "scale")
-        scale_cluster
-    ;;
-    "destroy")
-        terraform -chdir=terraform destroy -auto-approve
-    ;;
-    *)
-        echo "Unkown command : $CMD !"
-    ;;
+"create")
+  create_cluster
+  ;;
+"scale")
+  scale_cluster
+  ;;
+"destroy")
+  terraform -chdir=terraform destroy -auto-approve
+  ;;
+*)
+  echo "Unkown command : $CMD !"
+  ;;
 esac
