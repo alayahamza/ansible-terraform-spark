@@ -34,11 +34,15 @@
 - name: add ssh public key to authorized users
   shell: "cat /home/{{ spark_user }}/.ssh/id_rsa.pub >> /home/{{ spark_user }}/.ssh/authorized_keys"
 
-- name: install java
+- name: install packages
   become: true
   yum:
-    name: java-1.8.0-openjdk
+    name: "{{ item }}"
     state: present
+  with_items:
+    - java-1.8.0-openjdk
+    - unzip
+    - tar
 
 - name: Download spark using get_url
   become: true

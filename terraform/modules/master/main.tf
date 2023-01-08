@@ -13,7 +13,7 @@ output "master_ip" {
 }
 
 resource "linode_instance" "master" {
-  image           = "linode/centos7"
+  image           = "linode/centos-stream9"
   label           = "master"
   group           = "master"
   region          = "eu-west"
