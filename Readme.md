@@ -1,9 +1,19 @@
 # Provision an Apache Spark cluster using Ansible and terraform
 
+## Available with linode images:
+
+- Ubuntu
+    - [standalone-multi-vm-ubuntu20.04-linode](https://github.com/alayahamza/ansible-terraform-spark/tree/standalone-multi-vm-ubuntu20.04-linode)
+    - [standalone-multi-vm-ubuntu22.04-linode](https://github.com/alayahamza/ansible-terraform-spark/tree/standalone-multi-vm-ubuntu22.04-linode)
+- CentOs
+    - [standalone-multi-vm-centos7-linode](https://github.com/alayahamza/ansible-terraform-spark/tree/standalone-multi-vm-centos7-linode)
+    - [standalone-multi-vm-centos9-linode](https://github.com/alayahamza/ansible-terraform-spark/tree/standalone-multi-vm-centos9-linode)
+
 ## Prerequisites:
 
 - :link: [linode account](https://www.linode.com/)
-- :link: [Create a linode API token](https://www.linode.com/docs/products/tools/api/guides/manage-api-tokens/#create-an-api-token)
+- :
+  link: [Create a linode API token](https://www.linode.com/docs/products/tools/api/guides/manage-api-tokens/#create-an-api-token)
 - :closed_lock_with_key: ssh private and public keys
 - :scroll: provide the following files:
 
