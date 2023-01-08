@@ -14,7 +14,7 @@ output "workers_ip" {
 
 resource "linode_instance" "workers" {
   count           = var.workers_count
-  image           = "linode/ubuntu22.04"
+  image           = "linode/centos7"
   label           = "worker-${count.index}"
   group           = "workers"
   region          = "eu-west"

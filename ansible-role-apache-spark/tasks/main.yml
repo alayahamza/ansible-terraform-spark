@@ -5,13 +5,13 @@
 
 - name: update packages
   become: true
-  shell: "sudo apt-get update -y"
+  shell: "sudo yum update -y"
 
 - name: Add spark user to wheel
   user:
     name: "{{ spark_user }}"
     state: present
-    groups: "sudo"
+    groups: "wheel"
 
 - name: sudo without password for sudoers group
   copy:
@@ -36,8 +36,8 @@
 
 - name: install java
   become: true
-  apt:
-    name: openjdk-8-jdk
+  yum:
+    name: java-1.8.0-openjdk
     state: present
 
 - name: Download spark using get_url
@@ -87,12 +87,24 @@
     state: directory
     owner: "{{ spark_user }}"
 
-- name: Allow all access to tcp port 7077
+- name: start firewall
   become: true
-  community.general.ufw:
-    rule: allow
-    port: "7077"
-    proto: tcp
+  yum:
+    name: firewalld
+    state: present
+
+- name: Open Spark ports
+  become: yes
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - 7077/tcp
+    - 4040/tcp
+    - 8080/tcp
+    - 8081/tcp
 
 - name: set spark env
   shell: "{{ item }}"
