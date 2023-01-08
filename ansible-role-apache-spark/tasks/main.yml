@@ -1,4 +1,11 @@
 # tasks file for ansible-role-apache-spark
+- name: Wait for nodes to become reachable
+  wait_for_connection:
+
+- name: update packages
+  become: true
+  shell: "sudo apt-get update -y"
+
 - name: Add spark user to wheel
   user:
     name: "{{ spark_user }}"
@@ -52,6 +59,7 @@
   args:
     chdir: "{{ spark_install_dir }}"
   ignore_errors: true
+  when: inventory_hostname in groups['workers']
 
 - name: stop spark master
   become: true
@@ -59,6 +67,7 @@
   args:
     chdir: "{{ spark_install_dir }}"
   ignore_errors: true
+  when: inventory_hostname in groups['masters']
 
 - name: Make sure installation directory is empty
   become: true
@@ -84,17 +93,25 @@
     port: "7077"
     proto: tcp
 
+- name: set spark env
+  shell: "{{ item }}"
+  with_items:
+    - "cp {{ spark_install_dir }}/conf/spark-env.sh.template {{ spark_install_dir }}/conf/spark-env.sh"
+    - "echo SPARK_MASTER_HOST={{ master_ip_address }} >> {{ spark_install_dir }}/conf/spark-env.sh"
+
 - name: start spark master
   become: true
   shell: "sbin/start-master.sh"
   args:
     chdir: "{{ spark_install_dir }}"
+  when: inventory_hostname in groups['masters']
 
 - name: start spark worker
   become: true
-  shell: "sbin/start-worker.sh spark://$(hostname):7077"
+  shell: "sbin/start-worker.sh spark://{{ master_ip_address }}:7077"
   args:
     chdir: "{{ spark_install_dir }}"
+  when: inventory_hostname in groups['workers']
 
 - name: Set SPARK_HOME
   become: true

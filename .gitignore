@@ -5,3 +5,5 @@ ansible-role-apache-spark/.vscode/settings.json
 terraform/linode_api_token
 terraform/linode_ssh_key
 terraform/linode_ssh_key.pub
+terraform.tfstate
+terraform/ansible_inventory

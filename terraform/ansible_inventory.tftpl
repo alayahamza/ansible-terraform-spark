@@ -1,4 +1,7 @@
-[nodes]
-%{ for index, ip in nodes ~}
-node-${index} ansible_host=${ip} ansible_user=root ansible_password="3tGZB8SgJ+6.S#K" ansible_become_pass="3tGZB8SgJ+6.S#K" ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+[masters]
+master ansible_host="${master_ip}" ansible_user=root ansible_password="${root_pass}" ansible_become_pass="${root_pass}" ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[workers]
+%{ for index, ip in workers_ips ~}
+worker-${index} ansible_host=${ip} ansible_user=root ansible_password="${root_pass}" ansible_become_pass="${root_pass}" ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 %{ endfor ~}

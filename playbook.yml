@@ -1,4 +1,5 @@
 ---
-- hosts: nodes
+- hosts: master, workers
+  gather_facts: false
   roles:
     - { role: ansible-role-apache-spark }
